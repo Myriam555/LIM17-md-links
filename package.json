@@ -1,7 +1,27 @@
 {
   "name": "md-links",
   "version": "0.1.0",
+  "descripcion": "md-links @ My",
+  "author": {
+    "name": "Myriam Salazar",
+    "email": "myriamh125@gmail.com"
+  },
+  "scripts": {
+    "test": "jest --coverage"
+  },
   "engines": {
     "node": ">=14.x"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "fs": "0.0.1-security",
+    "jest": "^28.1.0",
+    "path": "^0.12.7"
+  },
+  "jest": {
+    "verbose": true
+  },
+  "bin": {
+    "md-links": "./cli.js"
   }
 }
