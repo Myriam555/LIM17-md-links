@@ -1,6 +1,6 @@
 const mdLinks = require('../src/md-links');
 
-jest.mock('../src/request.js');
+jest.mock('../src/request');
 
 describe('mdLinks', () => {
   it('should return true if path is absolute', () => {
@@ -57,66 +57,74 @@ describe('mdLinks', () => {
 describe('readPath', () => {
   it('should return array [..,..,..] if path is directory', () => {
     const links = mdLinks.readPath('test/prueba-links');
-    const result = ['test\\prueba-links\\archivo.MD', 'test\\prueba-links\\archivo.txt', 'test\\prueba-links\\prueba2-links\\archivo2.md', 'test\\prueba-links\\prueba2-links\\prueba3-links\\archivo3.md']
+    const result = ['test\\prueba-links\\archivo.MD', 'test\\prueba-links\\archivo.txt', 'test\\prueba-links\\prueba2-links\\archivo2.md', 'test\\prueba-links\\prueba2-links\\prueba3-links\\archivo3.md'];
     expect(links).toEqual(result);
   });
 
   it('should return array [..] if path is not directory', () => {
     const links = mdLinks.readPath('test/prueba-links/archivo.MD');
-    const result = ['test/prueba-links/archivo.MD']
+    const result = ['test/prueba-links/archivo.MD'];
     expect(links).toEqual(result);
   });
 });
 
 describe('readLinkFileMD', () => {
-  it('should return array [{file,link},{file,link},..] if link is MD', () => {
+  it('should return array [{file,link,text},{file,link,text},..] if link is MD', () => {
     const links = mdLinks.readLinkFileMD('test/prueba-links/archivo.MD');
-    const result = [{ 'file': 'test/prueba-links/archivo.MD', 'link': 'http://es.wikipedia.org/wiki/Wikipedia:Portada', }, { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/', },]
+    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'http://es.wikipedia.org/wiki/Wikipedia:Portada', text: 'es.wikipedia.org' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'www.youtube.com' }];
     expect(links).toEqual(result);
   });
 
   it('should return array [] if link is not MD', () => {
     const links = mdLinks.readLinkFileMD('test/prueba-links/archivo.txt');
-    const result = []
+    const result = [];
     expect(links).toEqual(result);
   });
 });
 
 describe('getLinksUnique', () => {
   it('should return array [{file1,link1},{file2,link2}] if link is not equal', () => {
-    const links = [{ 'file': 'test/prueba-links/archivo.MD', 'link': 'http://es.wikipedia.org/wiki/Wikipedia', }, { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/' }];
+    const links = [{ file: 'test/prueba-links/archivo.MD', link: 'http://es.wikipedia.org/wiki/Wikipedia' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/' }];
     const linksUnique = mdLinks.getLinksUnique(links);
-    const result = [{ 'file': 'test/prueba-links/archivo.MD', 'link': 'http://es.wikipedia.org/wiki/Wikipedia', }, { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/' }]
+    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'http://es.wikipedia.org/wiki/Wikipedia' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/' }];
     expect(linksUnique).toEqual(result);
   });
 
   it('should return array [{file1,link1}] if link is equal', () => {
-    const links = [{ 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/', }, { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/' }];
+    const links = [{ file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/' }];
     const linksUnique = mdLinks.getLinksUnique(links);
-    const result = [{ 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/' }]
+    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/' }];
     expect(linksUnique).toEqual(result);
   });
 });
 
 describe('requestLink', () => {
-  it('should return Promise resolve {file,link,statusCode:200,statusText:ok,text:data} from link', () => mdLinks.requestLink({ 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/' })
+  it('should return Promise resolve {file,link,statusCode:200,statusText:ok,text:data} from link', () => mdLinks.requestLink({ file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'data' })
     .then((request) => {
-      const result = { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.youtube.com/', 'statusCode': '200', 'statusText': 'ok', 'text': 'data' }
+      const result = {
+        file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', statusCode: '200', statusText: 'ok', text: 'data',
+      };
       expect(request).toEqual(result);
     }));
-  it('should return Promise resolve {file,link,statusCode:400,statusText:fail,text:data} from link', () => mdLinks.requestLink({ 'file': 'test/prueba-links/archivo.MD', 'link': 'www.youtube.com/' })
+  it('should return Promise resolve {file,link,statusCode:400,statusText:fail,text:data} from link', () => mdLinks.requestLink({ file: 'test/prueba-links/archivo.MD', link: 'www.youtube.com/', text: 'data' })
     .then((request) => {
-      const result = { 'file': 'test/prueba-links/archivo.MD', 'link': 'www.youtube.com/', 'statusCode': '400', 'statusText': 'fail', 'text': 'data' }
+      const result = {
+        file: 'test/prueba-links/archivo.MD', link: 'www.youtube.com/', statusCode: '400', statusText: 'fail', text: 'data',
+      };
       expect(request).toEqual(result);
     }));
-  it('should return Promise resolve {file,link,statusCode:200,statusText:ok,text:} from link', () => mdLinks.requestLink({ 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.noData.com/' })
+  it('should return Promise resolve {file,link,statusCode:200,statusText:ok,text:} from link', () => mdLinks.requestLink({ file: 'test/prueba-links/archivo.MD', link: 'https://www.noData.com/', text: '' })
     .then((request) => {
-      const result = { 'file': 'test/prueba-links/archivo.MD', 'link': 'https://www.noData.com/', 'statusCode': '200', 'statusText': 'ok', 'text': '' }
+      const result = {
+        file: 'test/prueba-links/archivo.MD', link: 'https://www.noData.com/', statusCode: '200', statusText: 'ok', text: '',
+      };
       expect(request).toEqual(result);
     }));
-  it('should return Promise resolve {file,link,statusCode:404,statusText:fail,text:} from link', () => mdLinks.requestLink({ 'file': 'test/prueba-links/archivo.MD', 'link': 'www.noData.com/' })
+  it('should return Promise resolve {file,link,statusCode:404,statusText:fail,text:} from link', () => mdLinks.requestLink({ file: 'test/prueba-links/archivo.MD', link: 'www.noData.com/', text: '' })
     .then((request) => {
-      const result = { 'file': 'test/prueba-links/archivo.MD', 'link': 'www.noData.com/', 'statusCode': '404', 'statusText': 'fail', 'text': '' }
+      const result = {
+        file: 'test/prueba-links/archivo.MD', link: 'www.noData.com/', statusCode: '404', statusText: 'fail', text: '',
+      };
       expect(request).toEqual(result);
     }));
 });
@@ -152,4 +160,3 @@ describe('verifyOptions', () => {
     expect(options).toEqual({ optionInvalid: [], optionDuplicate: [] });
   });
 });
-
