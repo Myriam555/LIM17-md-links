@@ -1,7 +1,7 @@
 {
-  "name": "md-links",
-  "version": "0.1.0",
-  "descripcion": "md-links @ My",
+  "name": "md-links-my",
+  "version": "1.0.0",
+  "descripcion": "Markdown links ",
   "author": {
     "name": "Myriam Salazar",
     "email": "myriamh125@gmail.com"
@@ -22,7 +22,7 @@
     "verbose": true
   },
   "bin": {
-    "md-links": "./cli.js"
+    "md-links": "src/cli.js"
   },
   "devDependencies": {
     "eslint": "^8.16.0",
