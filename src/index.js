@@ -1,5 +1,5 @@
-const chalk = require('./node_modules/chalk');
-const mdl = require('./src/md-links');
+const chalk = require('../node_modules/chalk');
+const mdl = require('./md-links');
 
 module.exports.mdLink = (_path, option) => new Promise((resolve, reject) => {
   let error;

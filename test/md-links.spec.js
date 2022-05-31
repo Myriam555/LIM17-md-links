@@ -39,7 +39,7 @@ describe('mdLinks', () => {
   });
 
   it('should return false if is not Directory', () => {
-    const directory = mdLinks.isDirectory('index.js');
+    const directory = mdLinks.isDirectory('src/index.js');
     expect(directory).toBe(false);
   });
 
@@ -71,7 +71,7 @@ describe('readPath', () => {
 describe('readLinkFileMD', () => {
   it('should return array [{file,link,text},{file,link,text},..] if link is MD', () => {
     const links = mdLinks.readLinkFileMD('test/prueba-links/archivo.MD');
-    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'http://es.wikipedia.org/wiki/Wikipedia:Portada', text: 'es.wikipedia.org' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'www.youtube.com' }];
+    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'https://es.wikipedia.org/wiki/Wikipedia:Portada', text: 'es.wikipedia.org' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'www.youtube.com' }];
     expect(links).toEqual(result);
   });
 
