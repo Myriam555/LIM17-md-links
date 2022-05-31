@@ -1,4 +1,5 @@
 const mdl = require('./src/md-links');
+const chalk = require('chalk');
 
 module.exports.mdLink = (_path, option) => {
     return new Promise(function (resolve, reject) {
@@ -27,42 +28,42 @@ module.exports.mdLink = (_path, option) => {
                                 .then((result) => {
                                     const linksBroken = result.filter(link => link.statusText === 'fail')
                                     if (option.includes('--stats')) {
-                                        response = `Total: ${links.length}\r\nUnique: ${linksUnique.length}\r\nBroken: ${linksBroken.length}`;
+                                        response = `${chalk.bgMagenta.bold('Total: ')} ${chalk.magenta.bold(links.length)}\r\n${chalk.bgBlue.bold('Unique:')} ${chalk.blue.bold(linksUnique.length)}\r\n${chalk.bgRed.bold('Broken:')} ${chalk.red.bold(linksBroken.length)}`;
                                     } else {
                                         result.forEach(link => {
-                                            response += `${link.file} ${link.link} ${link.statusText} ${link.statusCode} ${link.text}\r\n`;
+                                            response += `${chalk.magenta(link.file)} ${chalk.blue(link.link)} ${link.statusText=='ok'?chalk.green(link.statusText):chalk.red(link.statusText)} ${link.statusText=='ok'?chalk.green(link.statusCode):chalk.red(link.statusCode)} ${chalk.gray(link.text)}\r\n`;
                                         });
                                     }
                                     resolve({ response });
                                 });
                         } else {
                             if (option.includes('--stats')) {
-                                response = `Total: ${links.length}\r\nUnique: ${linksUnique.length}`;
+                                response = `${chalk.bgMagenta.bold('Total: ')} ${chalk.magenta.bold(links.length)}\r\n${chalk.bgBlue.bold('Unique:')} ${chalk.blue.bold(linksUnique.length)}`;
                             } else {
                                 linksUnique.forEach(link => {
-                                    response += `${link.file} ${link.link}\r\n`;
+                                    response += `${chalk.magenta(link.file)} ${chalk.blue(link.link)} ${chalk.gray(link.text)}\r\n`;
                                 });
                             }
                             resolve({ response });
                         }
                     } else {
-                        reject({ error: 'No links found' })
+                        reject({ error: `${chalk.bgRed('Error: ')} ${chalk.red('No links found')}` })
                     }
                 } else {
-                    optionsE = '';
+                    optionsE = `${chalk.bgRed('Error: ')} \r\n`;
                     if (options.optionDuplicate.length > 0) {
-                        optionsE += `Option duplicate: ${options.optionDuplicate.join()} `;
+                        optionsE += `${chalk.red('Option duplicate:')} ${chalk.red(options.optionDuplicate.join())} `;
                     }
                     if (options.optionInvalid.length > 0) {
-                        optionsE += `Option invalid: ${options.optionInvalid.join(', ')} `;
+                        optionsE += `${chalk.red('Option invalid:')} ${chalk.red(options.optionInvalid.join(', '))} `;
                     }
                     reject({ error: optionsE });
                 }
             } else {
-                reject({ error: 'the path entered not exist' });
+                reject({ error: `${chalk.bgRed('Error: ')} ${chalk.red('The path entered not exist')}` });
             }
         } else {
-            reject({ error: 'You not enter a path' });
+            reject({ error: `${chalk.bgRed('Error: ')} ${chalk.red('You not enter a path')}` });
         }
 
     })

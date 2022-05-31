@@ -32,7 +32,7 @@ const readLinkFileMD = file => {
     const content = fs.readFileSync(file, 'utf-8').split('\r\n').join(' ').split(' ');
     links = content.filter(str => str.substring(0, 7).includes('http://') || str.substring(0, 8).includes('https://'))
   }
-  linksInf = links.map(link => ({ file, link }))
+  linksInf = links.map(link => ({ file, link, text:link.split('/')[2].substring(0, 50) }));
   return linksInf;
 };
 // obtener links unicos
@@ -49,13 +49,11 @@ const requestLink = link => {
       .then(response => {
         link.statusCode = response.status;
         link.statusText = response.statusText.toLowerCase();
-        link.text = response.data ? response.data.substring(0, 50) : '';
         resolve(link);
       })
       .catch(error => {
         link.statusCode = error.response ? error.response.status : '404';
         link.statusText = 'fail'
-        link.text = error.response ? error.response.data.substring(0, 50) : '';
         resolve(link);
       });
   });
