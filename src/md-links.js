@@ -29,10 +29,15 @@ const readPath = (_path) => {
 const readLinkFileMD = (file) => {
   let links = [];
   if (isMDFile(file)) {
-    const content = fs.readFileSync(file, 'utf-8').split('\r\n').join(' ').split(' ');
+    const content = fs.readFileSync(file, 'utf-8').split('\r\n');
     links = content.filter((str) => str.substring(0, 7).includes('http://') || str.substring(0, 8).includes('https://'));
   }
-  const linksInf = links.map((link) => ({ file, link, text: link.split('/')[2].substring(0, 50) }));
+  const linksInf = links.map((link) => {
+    const line = link.split(' ');
+    const link1 = line[0];
+    const text1 = line.slice(1).join(' ').substring(0, 50);
+    return ({ file, link: link1, text: text1 });
+  });
   return linksInf;
 };
 // obtener links unicos
