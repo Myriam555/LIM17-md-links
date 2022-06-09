@@ -71,7 +71,7 @@ describe('readPath', () => {
 describe('readLinkFileMD', () => {
   it('should return array [{file,link,text},{file,link,text},..] if link is MD', () => {
     const links = mdLinks.readLinkFileMD('test/prueba-links/archivo.MD');
-    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'https://es.wikipedia.org/wiki/Wikipedia:Portada', text: 'es.wikipedia.org' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'www.youtube.com' }];
+    const result = [{ file: 'test/prueba-links/archivo.MD', link: 'https://es.wikipedia.org/wiki/Wikipedia:Portada', text: 'wikipedia' }, { file: 'test/prueba-links/archivo.MD', link: 'https://www.youtube.com/', text: 'youtube' }];
     expect(links).toEqual(result);
   });
 
