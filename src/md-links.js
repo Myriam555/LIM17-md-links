@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
 const path = require('path');
 const fs = require('fs');
@@ -28,14 +29,16 @@ const readPath = (_path) => {
 // leer archivos md
 const readLinkFileMD = (file) => {
   let links = [];
+  const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm;
+  const singleMatch = /\[([^\[]+)\]\((.*)\)/;
   if (isMDFile(file)) {
-    const content = fs.readFileSync(file, 'utf-8').split('\r\n');
-    links = content.filter((str) => str.substring(0, 7).includes('http://') || str.substring(0, 8).includes('https://'));
+    const content = fs.readFileSync(file, 'utf-8').split('\r\n').join(' ').split(' ');
+    links = content.filter((str) => str.match(regexMdLinks));
   }
   const linksInf = links.map((link) => {
-    const line = link.split(' ');
-    const link1 = line[0];
-    const text1 = line.slice(1).join(' ').substring(0, 50);
+    const text = singleMatch.exec(link);
+    const link1 = text[2];
+    const text1 = text[1].substring(0, 50);
     return ({ file, link: link1, text: text1 });
   });
   return linksInf;
